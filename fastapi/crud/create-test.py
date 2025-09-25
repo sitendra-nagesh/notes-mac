@@ -12,8 +12,8 @@ app = FastAPI()
 
 class Posts(BaseModel):
     title: str
-    id: int = None
-    content: str 
+    id: int
+    content: str = None
 
 def get_post_by_id(id):
     for idx, post in enumerate(post_list):
