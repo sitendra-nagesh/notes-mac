@@ -1,7 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends, APIRouter
 from typing import List
 
-
 from sqlalchemy.orm import Session
 from app.database import engine, get_db
 from app.model import Base
@@ -13,14 +12,17 @@ from app.util import hash_password
 
 from app.schema import PostCreate, UserPydanticCheck, UserResponseModel
 
-router = APIRouter()
+router = APIRouter(
+    prefix = "/posts",
+    tags = ["Posts"]
+)
 
-@router.get("/posts")
+@router.get("/")
 def get_posts(db: Session = Depends(get_db)):
     all_posts = db.query(post_table_model).all()
     return all_posts
 
-@router.post("/posts")
+@router.post("/")
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = post_table_model(title = post.title, content = post.content)
     db.add(new_post)
@@ -28,7 +30,7 @@ def create_post(post: PostCreate, db: Session = Depends(get_db)):
     db.refresh(new_post)
     return new_post
 
-@router.get("/posts/{id}")
+@router.get("/{id}")
 def get_a_post(id: int, db: Session = Depends(get_db)):
     one_post = db.query(post_table_model).filter(post_table_model.id == id ).first()
     print("one_post", one_post)
@@ -37,7 +39,7 @@ def get_a_post(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"id {id} does not exist.")
     return one_post
 
-@router.put("/posts/{id}")
+@router.put("/{id}")
 def update_a_post(id: int, post: PostCreate, db: Session = Depends(get_db)):
     one_post = db.query(post_table_model).filter(post_table_model.id == id).first()
     if one_post == None:
@@ -49,7 +51,7 @@ def update_a_post(id: int, post: PostCreate, db: Session = Depends(get_db)):
 
     return one_post
 
-@router.delete("/posts/{id}", status_code = 201)
+@router.delete("/{id}", status_code = 201)
 def delete_a_post(id: int, db: Session = Depends(get_db)):
     one_post = db.query(post_table_model).filter(post_table_model.id == id ).first()
     if one_post == None:

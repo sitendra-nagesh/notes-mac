@@ -19,3 +19,7 @@ class UserResponseModel(BaseModel):
     email: EmailStr
     # class Config:
     #     from_attributes = True
+
+class LoginModel(BaseModel):
+    email: EmailStr
+    password: str

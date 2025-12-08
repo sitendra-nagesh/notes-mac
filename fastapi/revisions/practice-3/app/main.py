@@ -7,7 +7,7 @@ from app.model import Base
 from app.model import Post as post_table_model
 from app.model import User as user_table_model
 
-from app.routers import post, user
+from app.routers import post, user, auth
 Base.metadata.create_all(engine)
 
 from app.util import hash_password
@@ -16,8 +16,9 @@ from app.schema import PostCreate, UserPydanticCheck, UserResponseModel
 
 app = FastAPI()
 
-app.include_router(post.router)
+app.include_router(post.router) # post is imported and router is defined inside post.py file
 app.include_router(user.router)
+app.include_router(auth.router)
 
 
 

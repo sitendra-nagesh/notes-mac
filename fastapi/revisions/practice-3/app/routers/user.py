@@ -1,7 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends, APIRouter
 from typing import List
 
-
 from sqlalchemy.orm import Session
 from app.database import engine, get_db
 from app.model import Base
@@ -12,15 +11,18 @@ from app.util import hash_password
 
 from app.schema import PostCreate, UserPydanticCheck, UserResponseModel
 
-router = APIRouter()
+router = APIRouter(
+    prefix = "/users",
+    tags = ["Users"]
+)
 
 # user table
-@router.get("/users", response_model = List[UserResponseModel] )
+@router.get("/", response_model = List[UserResponseModel] )
 def get_users(db: Session = Depends(get_db)):
     all_users = db.query(user_table_model).all()
     return all_users
 
-@router.get("/users/{id}", response_model = UserResponseModel )
+@router.get("/{id}", response_model = UserResponseModel )
 def get_a_user(id: int, db: Session = Depends(get_db), response_model = UserResponseModel):
     
     new_user = db.query(user_table_model).filter(user_table_model.id == id).first()
@@ -28,7 +30,7 @@ def get_a_user(id: int, db: Session = Depends(get_db), response_model = UserResp
         raise HTTPException(status_code = 404, detail = f"id {id} does not exist.")
     return new_user
 
-@router.post("/users", response_model = UserResponseModel)
+@router.post("/", response_model = UserResponseModel)
 def create_user(user: UserPydanticCheck, db: Session = Depends(get_db)):
     # print(user, user.password)
     user.password = hash_password(user.password)
@@ -38,7 +40,7 @@ def create_user(user: UserPydanticCheck, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.delete("/users/{id}", status_code=204)
+@router.delete("/{id}", status_code=204)
 def get_a_user(id: int, db: Session = Depends(get_db)):
     new_user = db.query(user_table_model).filter(user_table_model.id == id).first()
     if new_user == None:
@@ -46,7 +48,7 @@ def get_a_user(id: int, db: Session = Depends(get_db)):
     db.delete(new_user)
     db.commit()
 
-@router.put("/users/{id}", status_code=201, response_model = UserResponseModel)
+@router.put("/{id}", status_code=201, response_model = UserResponseModel)
 def get_a_user(user: UserPydanticCheck, id: int, db: Session = Depends(get_db)):
     new_user = db.query(user_table_model).filter(user_table_model.id == id).first()
     if new_user == None:
