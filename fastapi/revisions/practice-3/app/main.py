@@ -26,7 +26,12 @@ print(settings.database_hostname)
 
 app = FastAPI()
 
+@app.get("/")
+def hello_world():
+    return {"message": "Hello World!"}
+
 origins=["*"]
+# origins=["https://www.google.com", "https://www.youtube.com"]
 
 app.add_middleware(
     CORSMiddleware,
