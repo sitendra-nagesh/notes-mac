@@ -1,0 +1,33 @@
+version: "3"
+services:
+  api:
+    build: .
+    depends_on:
+      - postgres-service
+    ports:
+      # - <post-on-local-machin>:<post-on-container>
+      - 8000:8000
+    environment:
+      - DATABASE_HOSTNAME=postgres-service
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=sitendra
+      - DATABASE_NAME=fastapi
+      - SECRET_KEY=2b67bea9a09d4e1a209d9348fba29724a6099fad53a8a86e048257fb4806e786
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+  
+  postgres-service:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=sitendra
+      - POSTGRES_DB=fastapi
+
+    restart: always
+    volumes:
+      - postgres-db:/var/lib/postgresl/data
+
+volumes:
+  postgres-db:
+#  docker compose up -d
+# docker compose down
