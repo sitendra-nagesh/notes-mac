@@ -20,7 +20,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=True)
     email = Column(String, unique=True, nullable=True)
     password = Column(String, nullable=True)
-    phone_number = Column(String)
+    # phone_number = Column(String)
 
 class Vote(Base):
     __tablename__ = "votestwo"
